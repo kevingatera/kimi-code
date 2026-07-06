@@ -1,5 +1,53 @@
 # @moonshot-ai/kimi-code
 
+## 0.23.0
+
+### Minor Changes
+
+- [#1417](https://github.com/MoonshotAI/kimi-code/pull/1417) [`79b360c`](https://github.com/MoonshotAI/kimi-code/commit/79b360c96ad5d0af6a8c1d3a8df73adc65254d7c) Thanks [@RealKai42](https://github.com/RealKai42)! - Enable Preserved Thinking by default for Kimi models when Thinking is on, keeping prior reasoning across turns. Set `[thinking] keep = "off"` in config.toml (or `KIMI_MODEL_THINKING_KEEP=off`) to disable it.
+
+- [#1369](https://github.com/MoonshotAI/kimi-code/pull/1369) [`f0896a5`](https://github.com/MoonshotAI/kimi-code/commit/f0896a53b01f7e5b9bf5b8f93d2cd7387d765f07) Thanks [@starquakee](https://github.com/starquakee)! - Add experimental progressive tool disclosure (`select_tools`). When the `tool-select` experimental flag is on and the active model declares the `select_tools` capability, MCP tool schemas stay out of the request's top-level `tools[]` (preserving the provider prompt cache); the model loads tools on demand by exact name via the new built-in `select_tools` tool, guided by `<tools_added>/<tools_removed>` announcements. Off by default and inert on models without the capability — behavior is unchanged until a supporting model is catalogued. The SDK additionally maps the `select_tools` capability when building model aliases from a catalog and reports the new flag through `getExperimentalFeatures()`.
+
+### Patch Changes
+
+- [#1414](https://github.com/MoonshotAI/kimi-code/pull/1414) [`c12f309`](https://github.com/MoonshotAI/kimi-code/commit/c12f30951f2c278bebb42d0f61d67946c42b9577) Thanks [@RealKai42](https://github.com/RealKai42)! - AskUserQuestion now feeds answers back to the model as question text and option labels (e.g. `{"answers":{"Which database?":"Postgres"}}`) instead of synthesized ids like `q_0`/`opt_0_1`, so the model no longer has to map positional ids back to the original options — the wire protocol is unchanged, clients still answer with option ids. Question texts must now be unique per call and option labels unique per question; the web transcript card resolves both the new label form and legacy id transcripts.
+
+- [#1408](https://github.com/MoonshotAI/kimi-code/pull/1408) [`fc259ab`](https://github.com/MoonshotAI/kimi-code/commit/fc259abdb415fe9ac10132a142bdb5ce507ccda2) Thanks [@liruifengv](https://github.com/liruifengv)! - Fix `@` file completion missing deeply nested files in large projects after adding extra workspace directories.
+
+- [#1346](https://github.com/MoonshotAI/kimi-code/pull/1346) [`b9258ee`](https://github.com/MoonshotAI/kimi-code/commit/b9258ee07d32ff63afe9a2eb40fce6d136548fb2) Thanks [@liruifengv](https://github.com/liruifengv)! - Show compaction summaries in the TUI after compaction. Press Ctrl-O to show or hide the summary.
+
+- [#1419](https://github.com/MoonshotAI/kimi-code/pull/1419) [`5ea3ec4`](https://github.com/MoonshotAI/kimi-code/commit/5ea3ec489e0a7d66b844c39ee65162fd6a8ed8b1) Thanks [@liruifengv](https://github.com/liruifengv)! - Fix the Bash tool card collapsing in height when a multi-line command finishes with short output, and visually separate the command from its output.
+
+- [#1410](https://github.com/MoonshotAI/kimi-code/pull/1410) [`1c817df`](https://github.com/MoonshotAI/kimi-code/commit/1c817df1e522f438d4392568b64fc039dc867031) Thanks [@liruifengv](https://github.com/liruifengv)! - Fix the edit approval preview shown by ctrl+e to include surrounding context lines, matching the summary panel.
+
+- [#1421](https://github.com/MoonshotAI/kimi-code/pull/1421) [`1de0286`](https://github.com/MoonshotAI/kimi-code/commit/1de028612c80c38cd6fbe4483c123ded57a0a678) Thanks [@liruifengv](https://github.com/liruifengv)! - Fix the Edit tool card jumping in height and flickering while its result streams in.
+
+- [#1389](https://github.com/MoonshotAI/kimi-code/pull/1389) [`ebdffc7`](https://github.com/MoonshotAI/kimi-code/commit/ebdffc7df7b89dcafcf62f5705eafb50bfbaf5ab) Thanks [@sailist](https://github.com/sailist)! - Fix tool calling with Google Gemini models, including Gemini 3 thinking-signature round-trips across turns.
+
+- [#1393](https://github.com/MoonshotAI/kimi-code/pull/1393) [`4c43935`](https://github.com/MoonshotAI/kimi-code/commit/4c43935e31170140699a54cba631792872628655) Thanks [@justjavac](https://github.com/justjavac)! - web: Show the correct session search shortcut on Windows.
+
+- [#1406](https://github.com/MoonshotAI/kimi-code/pull/1406) [`ce41f4b`](https://github.com/MoonshotAI/kimi-code/commit/ce41f4b58d128ae47b0312eab24a845bbc0d08a3) Thanks [@wbxl2000](https://github.com/wbxl2000)! - web: Fix the collapsed sidebar not hiding and squeezing the conversation layout.
+
+- [#1413](https://github.com/MoonshotAI/kimi-code/pull/1413) [`913d042`](https://github.com/MoonshotAI/kimi-code/commit/913d042208b4bfe45dc13144c4797dba1cac5d05) Thanks [@liruifengv](https://github.com/liruifengv)! - Fix the input box shifting upward after the slash command menu closes.
+
+- [#1394](https://github.com/MoonshotAI/kimi-code/pull/1394) [`e95fc83`](https://github.com/MoonshotAI/kimi-code/commit/e95fc83cc295dccf3e4c748fba087530dba614b6) Thanks [@justjavac](https://github.com/justjavac)! - web: Fix the font size setting so chat text, composer text, and sidebar text follow the selected size.
+
+- [#1411](https://github.com/MoonshotAI/kimi-code/pull/1411) [`e6e6dd5`](https://github.com/MoonshotAI/kimi-code/commit/e6e6dd53ce9106f47684534a91acb1a803d1ab07) Thanks [@wbxl2000](https://github.com/wbxl2000)! - web: Stop the chat history from replaying its entrance animation every time a session is opened.
+
+- [#1390](https://github.com/MoonshotAI/kimi-code/pull/1390) [`083d0ca`](https://github.com/MoonshotAI/kimi-code/commit/083d0caf0524ed9cc7978007cd0f342f6bd2917e) Thanks [@sailist](https://github.com/sailist)! - Fix sessions that exist on disk but were missing from the session list or returned 404 on direct access, by rebuilding the session index at server startup and keeping it consistent.
+
+- [#1357](https://github.com/MoonshotAI/kimi-code/pull/1357) [`be7c991`](https://github.com/MoonshotAI/kimi-code/commit/be7c9916b019b19e057301c39bc7944fcac09414) Thanks [@wbxl2000](https://github.com/wbxl2000)! - web: Fix queued media messages not loading back into the composer and keep attachments when undoing a message.
+
+- [#1391](https://github.com/MoonshotAI/kimi-code/pull/1391) [`c5c6282`](https://github.com/MoonshotAI/kimi-code/commit/c5c6282f447dba202c79cf0e3b7524712d2c2748) Thanks [@wbxl2000](https://github.com/wbxl2000)! - web: Render AskUserQuestion answers as a readable option list with the chosen option(s) highlighted, instead of raw JSON.
+
+- [#1423](https://github.com/MoonshotAI/kimi-code/pull/1423) [`fa6d198`](https://github.com/MoonshotAI/kimi-code/commit/fa6d198b0174ad76aa4ca3c0ea2ed45e099e521b) Thanks [@liruifengv](https://github.com/liruifengv)! - web: Fix an almost-invisible composer input caret and a washed-out strikethrough on completed todos.
+
+- [#1391](https://github.com/MoonshotAI/kimi-code/pull/1391) [`c5c6282`](https://github.com/MoonshotAI/kimi-code/commit/c5c6282f447dba202c79cf0e3b7524712d2c2748) Thanks [@wbxl2000](https://github.com/wbxl2000)! - web: Align the markdown diff code block with the design system: code text keeps the normal ink colour while the sign and a soft row background carry the change, matching the ~/diff panel.
+
+- [#1392](https://github.com/MoonshotAI/kimi-code/pull/1392) [`4963c90`](https://github.com/MoonshotAI/kimi-code/commit/4963c9016fa19d1e01f8dc938c8d250afec87965) Thanks [@sailist](https://github.com/sailist)! - web: Show available skills in the composer before a session is created.
+
+- [#1391](https://github.com/MoonshotAI/kimi-code/pull/1391) [`c5c6282`](https://github.com/MoonshotAI/kimi-code/commit/c5c6282f447dba202c79cf0e3b7524712d2c2748) Thanks [@wbxl2000](https://github.com/wbxl2000)! - web: Drop the stray left indent in the tool-call card body so expanded content aligns with the header.
+
 ## 0.22.3
 
 ### Patch Changes
