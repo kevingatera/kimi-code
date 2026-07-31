@@ -6,6 +6,13 @@
  * headers vs the beta endpoint, and the thinking profile matrix (budget vs
  * adaptive).
  *
+ * `output_config.effort` is emitted only for name-recognized (adaptive)
+ * profiles; the `effortParam` option is an opt-in for third-party
+ * Anthropic-compatible endpoints (e.g. z.ai GLM over `/api/anthropic`) that
+ * honor effort on the enabled thinking path without a recognizable model
+ * name. budget_tokens is still sent there (required by Anthropic's
+ * enabled-thinking contract; ignored by such gateways).
+ *
  * The hook surface is `withThinking` plus `convertError`. `withThinking`
  * lets a vendor dialect running over this transport re-encode the thinking
  * intent; when the per-turn thinking intent carries `keep`, the BASE
@@ -144,6 +151,7 @@ export interface AnthropicOptions {
   stream?: boolean | undefined;
   adaptiveThinking?: boolean | undefined;
   supportEfforts?: readonly string[] | undefined;
+  effortParam?: boolean;
   betaApi?: boolean | undefined;
   thinkingEffort?: ThinkingEffort | undefined;
   clientFactory?: (auth: ProviderRequestAuth) => Anthropic;
@@ -811,6 +819,7 @@ export class AnthropicChatProvider implements ChatProvider {
   private readonly _clientFactory: ((auth: ProviderRequestAuth) => Anthropic) | undefined;
   private readonly _adaptiveThinking: boolean | undefined;
   private readonly _supportEfforts: readonly string[] | undefined;
+  private readonly _effortParam: boolean | undefined;
   private readonly _betaApi: boolean;
   private readonly _thinkingEffort: ThinkingEffort | undefined;
   private readonly _explicitMaxTokens: boolean;
@@ -822,6 +831,7 @@ export class AnthropicChatProvider implements ChatProvider {
     this._metadata = options.metadata;
     this._adaptiveThinking = options.adaptiveThinking;
     this._supportEfforts = options.supportEfforts;
+    this._effortParam = options.effortParam;
     this._betaApi = options.betaApi ?? false;
     this._thinkingEffort = options.thinkingEffort;
     this._hooks = options.hooks;
@@ -1089,7 +1099,10 @@ export class AnthropicChatProvider implements ChatProvider {
           : { type: 'enabled', budget_tokens: budgetTokens },
       betaFeatures: newBetas,
     };
-    if ((profile.supportsEffortParam || budgetTokens === undefined) && effort !== 'on') {
+    if (
+      (profile.supportsEffortParam || this._effortParam === true || budgetTokens === undefined) &&
+      effort !== 'on'
+    ) {
       patch.output_config = { effort } as MessageCreateParams['output_config'];
     } else {
       patch.output_config = undefined;
