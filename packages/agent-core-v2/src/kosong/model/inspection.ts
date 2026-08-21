@@ -179,6 +179,7 @@ const PROVIDER_OPTION_FIELD: Readonly<Record<string, string>> = {
   defaultMaxTokens: 'maxOutputSize',
   supportEfforts: 'supportEfforts',
   adaptiveThinking: 'adaptiveThinking',
+  effortParam: 'effortParam',
   betaApi: 'betaApi',
   reasoningKey: 'reasoningKey',
 };

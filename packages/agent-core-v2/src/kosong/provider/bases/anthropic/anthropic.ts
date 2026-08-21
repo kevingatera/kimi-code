@@ -120,6 +120,7 @@ export interface AnthropicOptions {
   stream?: boolean | undefined;
   adaptiveThinking?: boolean | undefined;
   supportEfforts?: readonly string[] | undefined;
+  effortParam?: boolean;
   betaApi?: boolean | undefined;
   thinkingEffort?: ThinkingEffort | undefined;
   clientFactory?: (auth: ProviderRequestAuth) => Anthropic;
@@ -785,6 +786,7 @@ export class AnthropicChatProvider implements ChatProvider {
   private readonly _clientFactory: ((auth: ProviderRequestAuth) => Anthropic) | undefined;
   private readonly _adaptiveThinking: boolean | undefined;
   private readonly _supportEfforts: readonly string[] | undefined;
+  private readonly _effortParam: boolean | undefined;
   private readonly _betaApi: boolean;
   private readonly _thinkingEffort: ThinkingEffort | undefined;
   private readonly _explicitMaxTokens: boolean;
@@ -796,6 +798,7 @@ export class AnthropicChatProvider implements ChatProvider {
     this._metadata = options.metadata;
     this._adaptiveThinking = options.adaptiveThinking;
     this._supportEfforts = options.supportEfforts;
+    this._effortParam = options.effortParam;
     this._betaApi = options.betaApi ?? false;
     this._thinkingEffort = options.thinkingEffort;
     this._hooks = options.hooks;
@@ -1063,7 +1066,10 @@ export class AnthropicChatProvider implements ChatProvider {
           : { type: 'enabled', budget_tokens: budgetTokens },
       betaFeatures: newBetas,
     };
-    if ((profile.supportsEffortParam || budgetTokens === undefined) && effort !== 'on') {
+    if (
+      (profile.supportsEffortParam || this._effortParam === true || budgetTokens === undefined) &&
+      effort !== 'on'
+    ) {
       patch.output_config = { effort } as MessageCreateParams['output_config'];
     } else {
       patch.output_config = undefined;

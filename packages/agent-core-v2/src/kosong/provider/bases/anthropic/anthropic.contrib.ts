@@ -21,6 +21,7 @@ registerProtocolBase({
         defaultMaxTokens: config.providerOptions?.defaultMaxTokens,
         adaptiveThinking: config.providerOptions?.adaptiveThinking,
         supportEfforts: config.providerOptions?.supportEfforts,
+        effortParam: config.providerOptions?.effortParam,
         betaApi: config.providerOptions?.betaApi,
         metadata:
           config.providerOptions?.metadata === undefined

@@ -12,6 +12,7 @@ export interface ModelOverride {
   displayName?: string;
   reasoningKey?: string;
   adaptiveThinking?: boolean;
+  effortParam?: boolean;
   supportEfforts?: string[];
   defaultEffort?: string;
   offEffort?: string;
@@ -38,6 +39,7 @@ export interface ModelRecord {
   displayName?: string;
   reasoningKey?: string;
   adaptiveThinking?: boolean;
+  effortParam?: boolean;
   betaApi?: boolean;
   supportEfforts?: string[];
   defaultEffort?: string;
