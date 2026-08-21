@@ -1,0 +1,67 @@
+name: Homelab Native Bundle
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-bundle:
+    name: Native bundle (${{ matrix.target }})
+    runs-on: ${{ matrix.runs-on }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runs-on: [self-hosted, Linux, X64, kimi-code]
+            target: linux-x64
+          - runs-on: ubuntu-24.04-arm
+            target: linux-arm64
+          - runs-on: macos-15-intel
+            target: darwin-x64
+          - runs-on: [self-hosted, macOS, ARM64, kimi-code]
+            target: darwin-arm64
+          - runs-on: windows-2025-vs2026
+            target: win32-x64
+          - runs-on: windows-11-arm
+            target: win32-arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify Kimi web assets
+        # The SEA blob step embeds apps/kimi-code/dist-web (committed bundle).
+        run: node apps/kimi-code/scripts/check-web-assets.mjs
+
+      - name: Build native executable (local profile)
+        run: pnpm --filter @moonshot-ai/kimi-code run build:native:sea
+
+      - name: Smoke test native executable
+        run: pnpm --filter @moonshot-ai/kimi-code run test:native:smoke
+
+      - name: Package native artifact
+        run: pnpm --filter @moonshot-ai/kimi-code run package:native
+
+      - name: Upload native artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: homelab-kimi-code-native-${{ matrix.target }}
+          retention-days: 30
+          path: |
+            apps/kimi-code/dist-native/artifacts/kimi-code-${{ matrix.target }}.zip
+            apps/kimi-code/dist-native/artifacts/kimi-code-${{ matrix.target }}.zip.sha256
+          if-no-files-found: ignore
