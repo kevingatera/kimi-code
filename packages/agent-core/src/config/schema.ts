@@ -288,6 +288,11 @@ const McpServerCommonFields = {
   toolTimeoutMs: McpTimeoutMsSchema.optional(),
   enabledTools: z.array(z.string()).optional(),
   disabledTools: z.array(z.string()).optional(),
+  // Restrict this server to specific model aliases. Entries are model alias
+  // keys (e.g. "example-provider/vision-large"); a trailing "*" is a prefix
+  // wildcard (e.g. "example-provider/*"). When set, the server is only loaded
+  // for sessions whose model matches.
+  models: z.array(z.string()).optional(),
 } as const;
 
 export const McpServerStdioConfigSchema = z.object({
